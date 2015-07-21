@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="trans_cyan">#1600FFFF</color>
+    <color name="trans_white">#50FFFFFF</color>
+    <color name="blue">#006699</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#80000000</color>
+    <color name="sand">#80D9D4CF</color>
+</resources>

@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Hammocks Rent</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_markers_dialog">Gestión Hamacas</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="abierto">Abierto</string>
+    <string name="cerrado">Cerrado</string>
+    <string name="ask_confirm_dialog">¿Está seguro de que desea eliminar la hamaca seleccionada?</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="creditos">Créditos</string>
+    <string name="usuario">Usuario:</string>
+    <string name="contraseña">Contraseña:</string>
+    <string name="salir">Salir</string>
+    <string name="ayuda">Ayuda</string>
+
+    <string-array name="marker_options">
+        <item>Mover hamaca</item>
+        <item>Marcar Disponible</item>
+        <item>Marcar Pendiente de Cobro</item>
+        <item>Marcar Ocupada y pagada</item>
+        <item>Quitar hamaca</item>
+    </string-array>
+
+    <string-array name="marker_add">
+        <item>Añadir hamaca</item>
+        <item>Añadir fila de hamacas</item>
+    </string-array>
+
+    <string-array name="list_navigation_drawer">
+        <item>Leer código</item>
+        <item>Opción 2</item>
+        <item>Imprimir Ticket</item>
+        <item>Cerrar sesión</item>
+    </string-array>
+</resources>
