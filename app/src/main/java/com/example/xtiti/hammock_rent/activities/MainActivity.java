@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.maps.android.SphericalUtil;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.json.JSONException;
@@ -404,6 +405,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         colocaFila(googleMap);
 
                         marcandoFila = false;
+                        puntoInicioFila = null;
                     }
 
                 }
@@ -456,16 +458,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void colocaFila(GoogleMap googleMap){
+        LatLng puntoIntermedio = null;
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.add(new LatLng(puntoInicioFila.getLatitude(), puntoInicioFila.getLongitude()));
-        polylineOptions.add(new LatLng(puntoFinFila.getLatitude(), puntoFinFila.getLongitude()));
+        LatLng inicioFila = new LatLng(puntoInicioFila.getLatitude(), puntoInicioFila.getLongitude());
+        LatLng finFila = new LatLng(puntoFinFila.getLatitude(), puntoFinFila.getLongitude());
+        polylineOptions.add(inicioFila);
+        polylineOptions.add(finFila);
+        polylineOptions.color(getResources().getColor(R.color.fila));
+        polylineOptions.width(Constantes.ANCHO_FILA);
 
         Polyline polyline = googleMap.addPolyline(polylineOptions);
 
-        double difLat = puntoFinFila.getLatitude() - puntoInicioFila.getLatitude();
-        double difLon = puntoFinFila.getLongitude() - puntoInicioFila.getLongitude();
-        double dist = puntoInicioFila.distanceTo(puntoFinFila);
+        MarkerOptions markerOptions = new MarkerOptions();
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24_green);
+        markerOptions.icon(bitmapDescriptor);
 
+        for(double pos = 0; pos <= 1; pos += 0.2){
+            puntoIntermedio = SphericalUtil.interpolate(inicioFila, finFila, pos);
+            markerOptions.position(puntoIntermedio);
+            googleMap.addMarker(markerOptions);
+        }
     }
 
     public ArrayList<Marker> getlistMarker(){
@@ -491,4 +503,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void setMarcandoFila(boolean marcandoFila) {
         this.marcandoFila = marcandoFila;
     }
+
+
 }

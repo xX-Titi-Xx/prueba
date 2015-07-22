@@ -102,8 +102,8 @@ public class Login extends AppCompatActivity {
 
                             try {
                                 if(response.getBoolean("comprobacion")){
-                                    etNombre.setText("");
                                     etPass.setText("");
+                                    etNombre.setText("");
 
                                     Toast.makeText(getApplicationContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
 

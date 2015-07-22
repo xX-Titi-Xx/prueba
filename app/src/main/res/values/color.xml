@@ -5,5 +5,6 @@
     <color name="blue">#006699</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#80000000</color>
-    <color name="sand">#80D9D4CF</color>
+    <color name="sand">#99000000</color>
+    <color name="fila">#30FFFFFF</color>
 </resources>

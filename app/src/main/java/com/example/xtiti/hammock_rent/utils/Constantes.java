@@ -20,6 +20,8 @@ public class Constantes {
     //DISTANCIA
     public static final float MAX_DISTANCE = 25;
 
+    public static float ANCHO_FILA= 0.5f;
+
     //RECURSOS
     public static final String PORT = "8080";
     //public static final String HOST = "http://192.168.2.3:" + PORT;

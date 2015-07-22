@@ -29,19 +29,13 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
     compile 'com.google.zxing:core:3.2.0'
     compile 'com.google.code.gson:gson:1.7.2'
+    compile 'com.google.maps.android:android-maps-utils:0.3.4'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'org.springframework.android:spring-android-rest-template:2.0.0.BUILD-SNAPSHOT'
     compile('org.simpleframework:simple-xml:2.7.+'){
         exclude module: 'stax'
         exclude module: 'stax-api'
         exclude module: 'xpp3'
-    }
-}
-
-repositories {
-    maven {
-        url 'http://repo.spring.io/snapshot'
     }
 }
