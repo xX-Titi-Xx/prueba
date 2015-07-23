@@ -8,5 +8,6 @@
     <dimen name="title_fontsize_confirm_dialog">16dp</dimen>
     <dimen name="et_login_width">150dp</dimen>
     <dimen name="bt_login_top_margin">10dp</dimen>
+    <dimen name="tvbottom_bottom_padding">20dp</dimen>
 
 </resources>

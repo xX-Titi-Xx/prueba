@@ -9,11 +9,13 @@
     <string name="ask_confirm_dialog">¿Está seguro de que desea eliminar la hamaca seleccionada?</string>
     <string name="cancelar">Cancelar</string>
     <string name="aceptar">Aceptar</string>
-    <string name="creditos">Créditos</string>
     <string name="usuario">Usuario:</string>
     <string name="contraseña">Contraseña:</string>
+
+    <string name="creditos">Créditos</string>
     <string name="salir">Salir</string>
     <string name="ayuda">Ayuda</string>
+    <string name="eliminar_lineas">Eliminar líneas</string>
 
     <string-array name="marker_options">
         <item>Mover hamaca</item>

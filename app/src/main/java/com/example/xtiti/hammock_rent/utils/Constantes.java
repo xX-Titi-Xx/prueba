@@ -9,16 +9,16 @@ public class Constantes {
     public static String USER;
     public static String PASSWORD;
 
-    public static int ID_EMPRESA = 1;
+    public static int ID_EMPRESA;
 
     //CÁMARA ZOOM
     public static final float MAX_ZOOM = 20f;
     public static final float NORMAL_ZOOM = 19.5f;
-    public static final float MIN_ZOOM = 18.9f;
+    public static final float MIN_ZOOM = 18.0f;
     public static final float ANGULO_CAMARA = 45f;
 
     //DISTANCIA
-    public static final float MAX_DISTANCE = 25;
+    public static double MAX_DISTANCE = 30;
 
     public static float ANCHO_FILA= 0.5f;
 

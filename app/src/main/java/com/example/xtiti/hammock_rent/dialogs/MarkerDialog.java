@@ -167,6 +167,7 @@ public class MarkerDialog extends DialogFragment {
 
                                 if (hamacaSaved.getEstado().equalsIgnoreCase("OCUPADA")) {
                                     marker.setIcon(customMarker);
+                                    mainActivity.estableceContadoresHamacas();
                                     Toast.makeText(getActivity(), "Hamaca OCUPADA y PAGADA.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     hamacaNueva.setEstado(estadoAnteriorHamaca);
@@ -228,6 +229,7 @@ public class MarkerDialog extends DialogFragment {
 
                                 if (hamacaSaved.getEstado().equalsIgnoreCase("PENDIENTE")) {
                                     marker.setIcon(customMarker);
+                                    mainActivity.estableceContadoresHamacas();
                                     Toast.makeText(getActivity(), "Hamaca PENDIENTE de pago.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     hamacaNueva.setEstado(estadoAnteriorHamaca);
@@ -290,6 +292,7 @@ public class MarkerDialog extends DialogFragment {
 
                                 if (hamacaSaved.getEstado().equalsIgnoreCase("LIBRE")) {
                                     marker.setIcon(customMarker);
+                                    mainActivity.estableceContadoresHamacas();
                                     Toast.makeText(getActivity(), "Hamaca LIBRE.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     hamacaNueva.setEstado(estadoAnteriorHamaca);
@@ -367,7 +370,8 @@ public class MarkerDialog extends DialogFragment {
                             if(hamacaSaved.getId() != hamacaNueva.getId()){
 
                                 listHamaca.add(hamacaSaved);
-                                Toast.makeText(getActivity(), "Nueva Hamaca añadida.", Toast.LENGTH_SHORT).show();
+                                mainActivity.estableceContadoresHamacas();
+                                Toast.makeText(getActivity(), "Nueva Hamaca AÑADIDA.", Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 Toast.makeText(getActivity(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();

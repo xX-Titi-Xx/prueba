@@ -15,5 +15,9 @@
         android:id="@+id/ayuda_menu"
         android:title="@string/ayuda"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/eliminar_lineas_menu"
+        android:title="@string/eliminar_lineas"
+        app:showAsAction="never"/>
 
 </menu>

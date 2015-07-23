@@ -104,8 +104,6 @@ public class Login extends AppCompatActivity {
                                 if(response.getBoolean("comprobacion")){
                                     etPass.setText("");
                                     etNombre.setText("");
-                                    etNombre.setText("");
-                                    etNombre.setText("");
 
                                     Toast.makeText(getApplicationContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
 
@@ -114,6 +112,8 @@ public class Login extends AppCompatActivity {
                                     intent.putExtra("latitudEmpresa", response.getDouble("latitudEmpresa"));
                                     intent.putExtra("longitudEmpresa", response.getDouble("longitudEmpresa"));
 
+                                    Constantes.ID_EMPRESA = response.getInt("idEmpresa");
+                                    Constantes.MAX_DISTANCE = response.getDouble("distancia");
 
                                     //Impide que la activity se reinicie al cerrarla.
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

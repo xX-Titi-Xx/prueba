@@ -61,7 +61,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence mTitle;
     private DrawerLayout drawerLayout;
+    private Hamaca hamacaNueva = null;
     private List<Hamaca> listHamaca;
+    private List<Polyline> listPolyline;
     private ArrayList<Marker> listMarker;
     private ArrayList<Alquiler> listAlquiler;
     private LatLng lastMarkerPosition;
@@ -97,7 +99,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         estableceContadoresHamacas();
     }
 
-    private void estableceContadoresHamacas() {
+    public void estableceContadoresHamacas() {
+
+        contHamacasLibres = 0;
+        contHamacasPendientes = 0;
+        contHamacasOcupadas = 0;
 
         for(Hamaca hamaca : listHamaca){
             if(hamaca.getEstado().equalsIgnoreCase("LIBRE")){
@@ -213,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         coordenadasMap = new LatLng(latitudEmpresa, longitudEmpresa);
 
         listHamaca = getIntent().getExtras().getParcelableArrayList("listHamaca");
+        listPolyline = new ArrayList<Polyline>();
 
         tvContHamacasLibres = (TextView)findViewById(R.id.cont_hamacas_disponibles);
         tvContHamacasPendientes = (TextView)findViewById(R.id.cont_hamacas_pend_pago);
@@ -261,6 +268,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
             return true;
         }
+        else if(id == R.id.eliminar_lineas_menu){
+            eliminarLineas();
+            return true;
+        }
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -277,8 +288,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //GOOGLE MAP
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        //Bloqueamos el mapa para que no se mueva en Scroll
-        googleMap.getUiSettings().setScrollGesturesEnabled(false);
+        
         CircleOptions options = new CircleOptions();
 
         options.center(coordenadasMap);
@@ -311,8 +321,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MAX_ZOOM));
                 } else if (cameraPosition.zoom < Constantes.MIN_ZOOM) {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MIN_ZOOM));
-                } else if (!googleMap.getCameraPosition().target.equals(coordenadasMap)) {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(coordenadasMap));
+                }
+                else if(SphericalUtil.computeDistanceBetween(coordenadasMap, cameraPosition.target) > Constantes.MAX_DISTANCE){
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(coordenadasMap));
                 }
             }
         });
@@ -440,7 +451,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                 }
-                Toast.makeText(getApplicationContext(), "hola!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -498,16 +508,70 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         polylineOptions.color(getResources().getColor(R.color.fila));
         polylineOptions.width(Constantes.ANCHO_FILA);
 
-        Polyline polyline = googleMap.addPolyline(polylineOptions);
+        listPolyline.add(googleMap.addPolyline(polylineOptions));
 
         MarkerOptions markerOptions = new MarkerOptions();
         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24_green);
         markerOptions.icon(bitmapDescriptor);
 
-        for(double pos = 0; pos <= 1; pos += 0.2){
+        for(double pos = 0; pos <= 1; pos += 0.05){
             puntoIntermedio = SphericalUtil.interpolate(inicioFila, finFila, pos);
             markerOptions.position(puntoIntermedio);
+            hamacaNueva = new Hamaca();
+            hamacaNueva.setId_empresa(Constantes.ID_EMPRESA);
+            hamacaNueva.setId(-1);
+            hamacaNueva.setEstado("LIBRE");
+            hamacaNueva.setLatitud(puntoIntermedio.latitude);
+            hamacaNueva.setLongitud(puntoIntermedio.longitude);
+
+            Gson gson = new Gson();
+            String hamacaJsonString = gson.toJson(hamacaNueva);
+            JsonObjectRequest jsonObjectRequest = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(hamacaJsonString);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                JsonParser jsonParser = new JsonParser();
+                                Gson gson2 = new Gson();
+                                JsonElement jsonElement = jsonParser.parse(response.toString());
+                                Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
+
+                                if(hamacaSaved.getId() != hamacaNueva.getId()){
+
+                                    listHamaca.add(hamacaSaved);
+                                    estableceContadoresHamacas();
+                                }
+                                else {
+                                    Toast.makeText(getApplicationContext(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, new Response.ErrorListener(){
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+
+                requestQueue.add(jsonObjectRequest);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             googleMap.addMarker(markerOptions);
+        }
+    }
+
+    private void eliminarLineas(){
+        for(Polyline polyline : listPolyline){
+            polyline.remove();
         }
     }
 
@@ -534,6 +598,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void setMarcandoFila(boolean marcandoFila) {
         this.marcandoFila = marcandoFila;
     }
-
-
 }

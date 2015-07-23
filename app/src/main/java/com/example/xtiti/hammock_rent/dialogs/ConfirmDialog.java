@@ -40,10 +40,12 @@ public class ConfirmDialog extends DialogFragment {
     private VolleyUtil volleyUtil;
     private RequestQueue requestQueue;
     private DialogInterface dialogo;
+    private MainActivity mainActivity;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        listMarker = ((MainActivity)getActivity()).getlistMarker();
+        mainActivity = ((MainActivity)getActivity());
+        listMarker = mainActivity.getlistMarker();
         volleyUtil = VolleyUtil.getInstance(getActivity().getApplicationContext());
         requestQueue = volleyUtil.getRequestQueue();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -78,6 +80,7 @@ public class ConfirmDialog extends DialogFragment {
                                 if(response.getBoolean("borrado")){
                                     listHamaca.remove(hamacaBorrar);
                                     marker.remove();
+                                    mainActivity.estableceContadoresHamacas();
 
                                     dialogo.dismiss();
                                 }

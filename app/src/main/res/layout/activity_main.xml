@@ -59,6 +59,21 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|bottom"
+            android:paddingBottom="@dimen/tvbottom_bottom_padding">
+
+            <TextView
+                android:id="@+id/tv_info_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Introduciendo fila..."/>
+
+        </LinearLayout>
     </FrameLayout>
     <!---->
 
