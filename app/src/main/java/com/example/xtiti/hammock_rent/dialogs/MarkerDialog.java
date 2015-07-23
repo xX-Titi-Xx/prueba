@@ -136,31 +136,125 @@ public class MarkerDialog extends DialogFragment {
     }
 
     private void markAsBusy() {
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24);
-        marker.setIcon(bitmapDescriptor);
+        hamacaNueva = new Hamaca();
+        hamacaNueva.setLongitud(marker.getPosition().longitude);
+        hamacaNueva.setLatitud(marker.getPosition().latitude);
+        hamacaNueva = listHamaca.get(listHamaca.indexOf(hamacaNueva));
 
-        Hamaca hamaca = new Hamaca();
-        hamaca.setLatitud(marker.getPosition().latitude);
-        hamaca.setLongitud(marker.getPosition().longitude);
+        if(!hamacaNueva.getEstado().equalsIgnoreCase("OCUPADA")) {
+            estadoAnteriorHamaca = hamacaNueva.getEstado();
+            hamacaNueva.setEstado("OCUPADA");
 
-        listHamaca.get(listHamaca.indexOf(hamaca)).setEstado("OCUPADA");
+            //CAMBIAR
 
-        dismiss();
-        Toast.makeText(getActivity(), "Hamaca pagada.", Toast.LENGTH_SHORT).show();
+            Gson gson = new Gson();
+            String hamacaJsonString = gson.toJson(hamacaNueva);
+            JsonObjectRequest jsonObjectRequest = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(hamacaJsonString);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                BitmapDescriptor customMarker = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24);
+                                JsonParser jsonParser = new JsonParser();
+                                Gson gson2 = new Gson();
+                                JsonElement jsonElement = jsonParser.parse(response.toString());
+                                Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
+
+                                if (hamacaSaved.getEstado().equalsIgnoreCase("OCUPADA")) {
+                                    marker.setIcon(customMarker);
+                                    Toast.makeText(getActivity(), "Hamaca OCUPADA y PAGADA.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    hamacaNueva.setEstado(estadoAnteriorHamaca);
+                                    Toast.makeText(getActivity(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();
+                                }
+
+                                dismiss();
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                        dismiss();
+                    }
+                });
+
+                requestQueue.add(jsonObjectRequest);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(), "La hamaca seleccionada ya está OCUPADA y PAGADA", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void markAsPending() {
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24_yellow);
-        marker.setIcon(bitmapDescriptor);
+        hamacaNueva = new Hamaca();
+        hamacaNueva.setLongitud(marker.getPosition().longitude);
+        hamacaNueva.setLatitud(marker.getPosition().latitude);
+        hamacaNueva = listHamaca.get(listHamaca.indexOf(hamacaNueva));
 
-        Hamaca hamaca = new Hamaca();
-        hamaca.setLatitud(marker.getPosition().latitude);
-        hamaca.setLongitud(marker.getPosition().longitude);
+        if(!hamacaNueva.getEstado().equalsIgnoreCase("PENDIENTE")) {
+            estadoAnteriorHamaca = hamacaNueva.getEstado();
+            hamacaNueva.setEstado("PENDIENTE");
 
-        listHamaca.get(listHamaca.indexOf(hamaca)).setEstado("PENDIENTE");
+            //CAMBIAR
 
-        dismiss();
-        Toast.makeText(getActivity(), "Hamaca Pendiente de Pago.", Toast.LENGTH_SHORT).show();
+            Gson gson = new Gson();
+            String hamacaJsonString = gson.toJson(hamacaNueva);
+            JsonObjectRequest jsonObjectRequest = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(hamacaJsonString);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                BitmapDescriptor customMarker = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24_yellow);
+                                JsonParser jsonParser = new JsonParser();
+                                Gson gson2 = new Gson();
+                                JsonElement jsonElement = jsonParser.parse(response.toString());
+                                Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
+
+                                if (hamacaSaved.getEstado().equalsIgnoreCase("PENDIENTE")) {
+                                    marker.setIcon(customMarker);
+                                    Toast.makeText(getActivity(), "Hamaca PENDIENTE de pago.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    hamacaNueva.setEstado(estadoAnteriorHamaca);
+                                    Toast.makeText(getActivity(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();
+                                }
+
+                                dismiss();
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                        dismiss();
+                    }
+                });
+
+                requestQueue.add(jsonObjectRequest);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(), "La hamaca seleccionada ya está PENDIENTE de pago", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void markAsAvailable() {

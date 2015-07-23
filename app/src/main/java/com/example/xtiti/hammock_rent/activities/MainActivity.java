@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -74,7 +75,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean marcandoFila;
     private Location puntoInicioFila;
     private Location puntoFinFila;
-
+    private TextView tvContHamacasLibres;
+    private TextView tvContHamacasPendientes;
+    private TextView tvContHamacasOcupadas;
+    private int contHamacasLibres;
+    private int contHamacasPendientes;
+    private int contHamacasOcupadas;
 
 
     @Override
@@ -87,6 +93,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         inicializaNavigationDrawer();
 
         inicializaMap();
+
+        estableceContadoresHamacas();
+    }
+
+    private void estableceContadoresHamacas() {
+
+        for(Hamaca hamaca : listHamaca){
+            if(hamaca.getEstado().equalsIgnoreCase("LIBRE")){
+                contHamacasLibres++;
+            }
+            else if(hamaca.getEstado().equalsIgnoreCase("OCUPADA")){
+                contHamacasOcupadas++;
+            }
+            else{
+                contHamacasPendientes++;
+            }
+        }
+
+        tvContHamacasLibres.setText(String.valueOf(contHamacasLibres) + "/" + String.valueOf(listHamaca.size()));
+        tvContHamacasPendientes.setText(String.valueOf(contHamacasPendientes) + "/" + String.valueOf(listHamaca.size()));
+        tvContHamacasOcupadas.setText(String.valueOf(contHamacasOcupadas) + "/" + String.valueOf(listHamaca.size()));
     }
 
     private void inicializaMap(){
@@ -186,6 +213,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         coordenadasMap = new LatLng(latitudEmpresa, longitudEmpresa);
 
         listHamaca = getIntent().getExtras().getParcelableArrayList("listHamaca");
+
+        tvContHamacasLibres = (TextView)findViewById(R.id.cont_hamacas_disponibles);
+        tvContHamacasPendientes = (TextView)findViewById(R.id.cont_hamacas_pend_pago);
+        tvContHamacasOcupadas = (TextView)findViewById(R.id.cont_hamacas_ocupadas);
 
         marcandoFila = false;
         sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
