@@ -288,7 +288,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //GOOGLE MAP
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        
+
+        googleMap.getUiSettings().setScrollGesturesEnabled(true);
         CircleOptions options = new CircleOptions();
 
         options.center(coordenadasMap);
@@ -317,9 +318,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                if (cameraPosition.zoom > Constantes.MAX_ZOOM) {
+                /*if (cameraPosition.zoom > Constantes.MAX_ZOOM) {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MAX_ZOOM));
-                } else if (cameraPosition.zoom < Constantes.MIN_ZOOM) {
+                } */
+                if (cameraPosition.zoom < Constantes.MIN_ZOOM) {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MIN_ZOOM));
                 }
                 else if(SphericalUtil.computeDistanceBetween(coordenadasMap, cameraPosition.target) > Constantes.MAX_DISTANCE){
