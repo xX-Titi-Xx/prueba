@@ -127,10 +127,10 @@ public class MarkerDialog extends DialogFragment {
     }
 
     private void removeHamaca() {
-        ConfirmDialog confirmDialog = new ConfirmDialog();
-        confirmDialog.setMarker(marker);
-        confirmDialog.setListHamaca(listHamaca);
-        confirmDialog.show(getFragmentManager(), "tagConfirmBorradoHamaca");
+        ConfirmDialogBorradoHamaca confirmDialogBorradoHamaca = new ConfirmDialogBorradoHamaca();
+        confirmDialogBorradoHamaca.setMarker(marker);
+        confirmDialogBorradoHamaca.setListHamaca(listHamaca);
+        confirmDialogBorradoHamaca.show(getFragmentManager(), "tagConfirmBorradoHamaca");
 
         dismiss();
     }

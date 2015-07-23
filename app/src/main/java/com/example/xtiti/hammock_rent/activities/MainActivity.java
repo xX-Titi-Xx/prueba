@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
+import com.example.xtiti.hammock_rent.dialogs.ConfirmDialogNuevaFilaHamaca;
 import com.example.xtiti.hammock_rent.dialogs.MarkerDialog;
 import com.example.xtiti.hammock_rent.models.Alquiler;
 import com.example.xtiti.hammock_rent.models.Hamaca;
@@ -62,9 +63,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CharSequence mTitle;
     private DrawerLayout drawerLayout;
     private Hamaca hamacaNueva = null;
+    private Hamaca hamacaArrastrada;
     private List<Hamaca> listHamaca;
+    private List<Hamaca> listNuevaFilaHamaca;
     private List<Polyline> listPolyline;
     private ArrayList<Marker> listMarker;
+    private ArrayList<Marker> listMarkerNuevaFilaHamaca;
     private ArrayList<Alquiler> listAlquiler;
     private LatLng lastMarkerPosition;
     private VolleyUtil volleyUtil;
@@ -73,13 +77,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String qrCode;
     private ProgressDialog progressDialog;
     private int posHamacaCogida;
-    private Hamaca hamacaArrastrada;
     private boolean marcandoFila;
     private Location puntoInicioFila;
     private Location puntoFinFila;
     private TextView tvContHamacasLibres;
     private TextView tvContHamacasPendientes;
     private TextView tvContHamacasOcupadas;
+    private TextView tvInfoBottom;
     private int contHamacasLibres;
     private int contHamacasPendientes;
     private int contHamacasOcupadas;
@@ -224,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tvContHamacasLibres = (TextView)findViewById(R.id.cont_hamacas_disponibles);
         tvContHamacasPendientes = (TextView)findViewById(R.id.cont_hamacas_pend_pago);
         tvContHamacasOcupadas = (TextView)findViewById(R.id.cont_hamacas_ocupadas);
+        tvInfoBottom = (TextView)findViewById(R.id.tv_info_bottom);
 
         marcandoFila = false;
         sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -232,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         requestQueue = volleyUtil.getRequestQueue();
         listMarker = new ArrayList<Marker>();
         progressDialog = new ProgressDialog(this);
-
     }
 
     @Override
@@ -311,16 +315,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraPosition cameraPosition = cameraPositionBuilder.build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); //newLatLngZoom(coordenadasMap, Constantes.NORMAL_ZOOM));
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.addCircle(options);
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                /*if (cameraPosition.zoom > Constantes.MAX_ZOOM) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MAX_ZOOM));
-                } */
+
                 if (cameraPosition.zoom < Constantes.MIN_ZOOM) {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MIN_ZOOM));
                 }
@@ -348,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
+                tvInfoBottom.setText("Recolocando Hamaca...");
                 Toast.makeText(getApplicationContext(), "Coloque la hamaca en el lugar deseado.", Toast.LENGTH_SHORT).show();
             }
 
@@ -358,6 +361,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+
+                tvInfoBottom.setText("");
 
                 Gson gson = new Gson();
 
@@ -450,8 +455,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         marcandoFila = false;
                         puntoInicioFila = null;
+                        tvInfoBottom.setText("");
                     }
-
                 }
             }
         });
@@ -501,6 +506,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void colocaFila(GoogleMap googleMap){
+        listNuevaFilaHamaca = new ArrayList<Hamaca>();
+        listMarkerNuevaFilaHamaca = new ArrayList<Marker>();
         LatLng puntoIntermedio = null;
         PolylineOptions polylineOptions = new PolylineOptions();
         LatLng inicioFila = new LatLng(puntoInicioFila.getLatitude(), puntoInicioFila.getLongitude());
@@ -519,56 +526,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         for(double pos = 0; pos <= 1; pos += 0.05){
             puntoIntermedio = SphericalUtil.interpolate(inicioFila, finFila, pos);
             markerOptions.position(puntoIntermedio);
+
             hamacaNueva = new Hamaca();
-            hamacaNueva.setId_empresa(Constantes.ID_EMPRESA);
             hamacaNueva.setId(-1);
+            hamacaNueva.setId_empresa(Constantes.ID_EMPRESA);
             hamacaNueva.setEstado("LIBRE");
             hamacaNueva.setLatitud(puntoIntermedio.latitude);
             hamacaNueva.setLongitud(puntoIntermedio.longitude);
 
-            Gson gson = new Gson();
-            String hamacaJsonString = gson.toJson(hamacaNueva);
-            JsonObjectRequest jsonObjectRequest = null;
+            listNuevaFilaHamaca.add(hamacaNueva);
 
-            try {
-                JSONObject jsonObject = new JSONObject(hamacaJsonString);
-                jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                        Constantes.URL_SAVEHAMACA, jsonObject,
-                        new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                JsonParser jsonParser = new JsonParser();
-                                Gson gson2 = new Gson();
-                                JsonElement jsonElement = jsonParser.parse(response.toString());
-                                Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
-
-                                if(hamacaSaved.getId() != hamacaNueva.getId()){
-
-                                    listHamaca.add(hamacaSaved);
-                                    estableceContadoresHamacas();
-                                }
-                                else {
-                                    Toast.makeText(getApplicationContext(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }, new Response.ErrorListener(){
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                    }
-                });
-
-                requestQueue.add(jsonObjectRequest);
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            googleMap.addMarker(markerOptions);
+            listMarkerNuevaFilaHamaca.add(googleMap.addMarker(markerOptions));
         }
+
+        ConfirmDialogNuevaFilaHamaca confirmDialogNuevaFilaHamaca = new ConfirmDialogNuevaFilaHamaca();
+        confirmDialogNuevaFilaHamaca.setListMarkerNuevaFilaHamaca(listMarkerNuevaFilaHamaca);
+        confirmDialogNuevaFilaHamaca.setListNuevaFilaHamaca(listNuevaFilaHamaca);
+        confirmDialogNuevaFilaHamaca.show(getFragmentManager(), "tagDialogConfirmNuevaFilaHamaca");
     }
 
     private void eliminarLineas(){
@@ -599,5 +573,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void setMarcandoFila(boolean marcandoFila) {
         this.marcandoFila = marcandoFila;
+        tvInfoBottom.setText("Creando nueva Fila...");
+    }
+
+    public ArrayList<Marker> getListMarkerNuevaFilaHamaca() {
+        return listMarkerNuevaFilaHamaca;
+    }
+
+    public List<Hamaca> getListNuevaFilaHamaca() {
+        return listNuevaFilaHamaca;
     }
 }

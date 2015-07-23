@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by xtiti on 9/07/15.
  */
-public class ConfirmDialog extends DialogFragment {
+public class ConfirmDialogBorradoHamaca extends DialogFragment {
 
     private ArrayList<Marker> listMarker;
     private List<Hamaca> listHamaca;
@@ -51,7 +51,7 @@ public class ConfirmDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.confirm_dialog, null);
+        View view = inflater.inflate(R.layout.confirm_dialog_borrado_hamaca, null);
 
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.aceptar), new DialogInterface.OnClickListener() {

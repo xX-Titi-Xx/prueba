@@ -11,6 +11,8 @@ public class Constantes {
 
     public static int ID_EMPRESA;
 
+    public static final int ID_HAMACA_NOT_SAVED = -1;
+
     //CÁMARA ZOOM
     public static final float MAX_ZOOM = 20f;
     public static final float NORMAL_ZOOM = 19.5f;

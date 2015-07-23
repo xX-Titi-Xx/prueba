@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,7 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"/>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,12 +73,10 @@
                 android:id="@+id/tv_info_bottom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="Introduciendo fila..."/>
+                android:textColor="@color/white"/>
 
         </LinearLayout>
     </FrameLayout>
-    <!---->
 
     <ListView android:id="@+id/navigation_drawer"
         android:layout_width="150dp"
