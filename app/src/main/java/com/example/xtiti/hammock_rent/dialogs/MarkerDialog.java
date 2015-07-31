@@ -3,6 +3,7 @@ package com.example.xtiti.hammock_rent.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,8 +21,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
 import com.example.xtiti.hammock_rent.activities.MainActivity;
+import com.example.xtiti.hammock_rent.models.Alquiler;
 import com.example.xtiti.hammock_rent.models.Hamaca;
-import com.example.xtiti.hammock_rent.utils.Constantes;
+import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -50,11 +52,13 @@ public class MarkerDialog extends DialogFragment {
     private GoogleMap googleMap;
     private ArrayList<Marker> listMarker;
     private List<Hamaca> listHamaca;
+    private List<Alquiler> listAlquiler;
     private VolleyUtil volleyUtil;
     private RequestQueue requestQueue;
     private MainActivity mainActivity;
     private Hamaca hamacaNueva;
     private String estadoAnteriorHamaca;
+    private ProgressDialog progressDialog;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class MarkerDialog extends DialogFragment {
         requestQueue = volleyUtil.getRequestQueue();
         listMarker = ((MainActivity)getActivity()).getlistMarker();
         listHamaca = mainActivity.getListHamaca();
+        listAlquiler = mainActivity.getListAlquiler();
+        progressDialog = new ProgressDialog(mainActivity);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -145,16 +151,21 @@ public class MarkerDialog extends DialogFragment {
             estadoAnteriorHamaca = hamacaNueva.getEstado();
             hamacaNueva.setEstado("OCUPADA");
 
+            Alquiler alquiler = new Alquiler();
+            alquiler.setId_usuario(Globales.ID_USUARIO);
+            alquiler.setId_empresa(Globales.ID_EMPRESA);
+            alquiler.setId_hamaca(hamacaNueva.getId());
+
             //CAMBIAR
 
             Gson gson = new Gson();
-            String hamacaJsonString = gson.toJson(hamacaNueva);
+            String alquilerJsonString = gson.toJson(alquiler);
             JsonObjectRequest jsonObjectRequest = null;
 
             try {
-                JSONObject jsonObject = new JSONObject(hamacaJsonString);
+                JSONObject jsonObject = new JSONObject(alquilerJsonString);
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        Globales.URL_ALQUILER_HAMAMCA, jsonObject,
                         new Response.Listener<JSONObject>() {
 
                             @Override
@@ -163,16 +174,17 @@ public class MarkerDialog extends DialogFragment {
                                 JsonParser jsonParser = new JsonParser();
                                 Gson gson2 = new Gson();
                                 JsonElement jsonElement = jsonParser.parse(response.toString());
-                                Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
 
-                                if (hamacaSaved.getEstado().equalsIgnoreCase("OCUPADA")) {
-                                    marker.setIcon(customMarker);
-                                    mainActivity.estableceContadoresHamacas();
-                                    Toast.makeText(getActivity(), "Hamaca OCUPADA y PAGADA.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    hamacaNueva.setEstado(estadoAnteriorHamaca);
-                                    Toast.makeText(getActivity(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT).show();
-                                }
+                                listAlquiler.add(gson2.fromJson(jsonElement, Alquiler.class));
+
+                                progressDialog.dismiss();
+
+                                marker.setIcon(customMarker);
+                                mainActivity.estableceContadoresHamacas();
+                                Toast.makeText(getActivity(), "Hamaca OCUPADA y PAGADA.", Toast.LENGTH_SHORT).show();
+
+                                PrintDialog printDialog = new PrintDialog();
+                                printDialog.show(getFragmentManager(), "tagPrintDialog");
 
                                 dismiss();
                             }
@@ -180,11 +192,17 @@ public class MarkerDialog extends DialogFragment {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
+                        progressDialog.dismiss();
+
                         Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
+
                         dismiss();
                     }
                 });
+
+                progressDialog.setMessage("Realizando operación...");
+                progressDialog.show();
 
                 requestQueue.add(jsonObjectRequest);
 
@@ -216,7 +234,7 @@ public class MarkerDialog extends DialogFragment {
             try {
                 JSONObject jsonObject = new JSONObject(hamacaJsonString);
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        Globales.URL_SAVEHAMACA, jsonObject,
                         new Response.Listener<JSONObject>() {
 
                             @Override
@@ -226,6 +244,8 @@ public class MarkerDialog extends DialogFragment {
                                 Gson gson2 = new Gson();
                                 JsonElement jsonElement = jsonParser.parse(response.toString());
                                 Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
+
+                                progressDialog.dismiss();
 
                                 if (hamacaSaved.getEstado().equalsIgnoreCase("PENDIENTE")) {
                                     marker.setIcon(customMarker);
@@ -238,15 +258,22 @@ public class MarkerDialog extends DialogFragment {
 
                                 dismiss();
                             }
-                        }, new Response.ErrorListener() {
+                        },
+                        new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                        dismiss();
-                    }
-                });
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                                progressDialog.dismiss();
+
+                                Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
+                                error.printStackTrace();
+                                dismiss();
+                            }
+                        });
+
+                progressDialog.setMessage("Realizando operación...");
+                progressDialog.show();
 
                 requestQueue.add(jsonObjectRequest);
 
@@ -270,8 +297,6 @@ public class MarkerDialog extends DialogFragment {
             estadoAnteriorHamaca = hamacaNueva.getEstado();
             hamacaNueva.setEstado("LIBRE");
 
-            //CAMBIAR
-
             Gson gson = new Gson();
             String hamacaJsonString = gson.toJson(hamacaNueva);
             JsonObjectRequest jsonObjectRequest = null;
@@ -279,7 +304,7 @@ public class MarkerDialog extends DialogFragment {
             try {
                 JSONObject jsonObject = new JSONObject(hamacaJsonString);
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                        Constantes.URL_SAVEHAMACA, jsonObject,
+                        Globales.URL_SAVEHAMACA, jsonObject,
                         new Response.Listener<JSONObject>() {
 
                             @Override
@@ -289,6 +314,8 @@ public class MarkerDialog extends DialogFragment {
                                 Gson gson2 = new Gson();
                                 JsonElement jsonElement = jsonParser.parse(response.toString());
                                 Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
+
+                                progressDialog.dismiss();
 
                                 if (hamacaSaved.getEstado().equalsIgnoreCase("LIBRE")) {
                                     marker.setIcon(customMarker);
@@ -305,11 +332,15 @@ public class MarkerDialog extends DialogFragment {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
                         Toast.makeText(getActivity(), "Se ha producido un error en la comunicación.", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                         dismiss();
                     }
                 });
+
+                progressDialog.setMessage("Realizando operación...");
+                progressDialog.show();
 
                 requestQueue.add(jsonObjectRequest);
 
@@ -340,7 +371,7 @@ public class MarkerDialog extends DialogFragment {
         markerOptions.icon(customMarker);
         markerOptions.position(coordenadasMarker);
         hamacaNueva = new Hamaca();
-        hamacaNueva.setId_empresa(Constantes.ID_EMPRESA);
+        hamacaNueva.setId_empresa(Globales.ID_EMPRESA);
         hamacaNueva.setId(-1);
         hamacaNueva.setLongitud(coordenadasMarker.longitude);
         hamacaNueva.setLatitud(coordenadasMarker.latitude);
@@ -357,7 +388,7 @@ public class MarkerDialog extends DialogFragment {
         try {
             JSONObject jsonObject = new JSONObject(hamacaJsonString);
             jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                    Constantes.URL_SAVEHAMACA, jsonObject,
+                    Globales.URL_SAVEHAMACA, jsonObject,
                     new Response.Listener<JSONObject>() {
 
                         @Override

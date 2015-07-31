@@ -18,7 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
 import com.example.xtiti.hammock_rent.activities.MainActivity;
 import com.example.xtiti.hammock_rent.models.Hamaca;
-import com.example.xtiti.hammock_rent.utils.Constantes;
+import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
@@ -65,7 +65,7 @@ public class ConfirmDialogNuevaFilaHamaca extends DialogFragment {
                     try {
                         JSONObject jsonObject = new JSONObject(hamacaJsonString);
                         jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                                Constantes.URL_SAVEHAMACA, jsonObject,
+                                Globales.URL_SAVEHAMACA, jsonObject,
                                 new Response.Listener<JSONObject>() {
 
                                     @Override
@@ -75,7 +75,7 @@ public class ConfirmDialogNuevaFilaHamaca extends DialogFragment {
                                         JsonElement jsonElement = jsonParser.parse(response.toString());
                                         Hamaca hamacaSaved = gson2.fromJson(jsonElement, Hamaca.class);
 
-                                        if (hamacaSaved.getId() != Constantes.ID_HAMACA_NOT_SAVED) {
+                                        if (hamacaSaved.getId() != Globales.ID_HAMACA_NOT_SAVED) {
 
                                             mainActivity.getListHamaca().add(hamacaSaved);
                                             mainActivity.estableceContadoresHamacas();

@@ -19,7 +19,7 @@ public class MarkersDAO {
     public List<Hamaca> getListHamacas(){
 
         List<Hamaca> listHamacas = new ArrayList<Hamaca>();
-        //listHamacas.add(new Hamaca(new LatLng(1212, 656), Constantes.ESTADO_HAMACA.LIBRE));
+        //listHamacas.add(new Hamaca(new LatLng(1212, 656), Globales.ESTADO_HAMACA.LIBRE));
 
         return listHamacas;
     }

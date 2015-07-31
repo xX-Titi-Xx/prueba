@@ -17,6 +17,9 @@
     <string name="ayuda">Ayuda</string>
     <string name="eliminar_lineas">Eliminar líneas</string>
     <string name="title_confirm_dialog_nueva_fila_hamaca">¿Desea guardar la nueva fila o eliminarla?</string>
+    <string name="desea_imprimir_ticket">¿Desea imprimir el ticket de la operación?</string>
+    <string name="si">Sí</string>
+    <string name="no">No</string>
 
     <string-array name="marker_options">
         <item>Mover hamaca</item>

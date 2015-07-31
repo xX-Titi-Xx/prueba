@@ -3,15 +3,15 @@ package com.example.xtiti.hammock_rent.utils;
 /**
  * Created by xtiti on 8/07/15.
  */
-public class Constantes {
+public class Globales {
 
     //Usuario y contraseña
+    public static int ID_USUARIO;
     public static String USER;
     public static String PASSWORD;
 
     public static int ID_EMPRESA;
-
-    public static final int ID_HAMACA_NOT_SAVED = -1;
+    public static String NOMBRE_EMPRESA;
 
     //CÁMARA ZOOM
     public static final float MAX_ZOOM = 20f;
@@ -33,7 +33,11 @@ public class Constantes {
     public static final String URL_LISTAHAMACAS = HOST + "/Hammock_Rent/rest/listahamacas";
     public static final String URL_LOGIN = HOST + "/Hammock_Rent/rest/login";
     public static final String URL_HORA = HOST + "/Hammock_Rent/rest/horaserver";
+    public static final String URL_ALQUILER_HAMAMCA = HOST + "/Hammock_Rent/rest/alquilerhamaca";
 
     //CONEXIONES
     public static final int TIMEOUT = 20000;
+
+    //CONSTANTES
+    public static final int ID_HAMACA_NOT_SAVED = -1;
 }

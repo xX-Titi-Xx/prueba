@@ -18,8 +18,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
+import com.example.xtiti.hammock_rent.models.Alquiler;
 import com.example.xtiti.hammock_rent.models.Hamaca;
-import com.example.xtiti.hammock_rent.utils.Constantes;
+import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by xtiti on 9/07/15.
@@ -84,16 +86,17 @@ public class Login extends AppCompatActivity {
     public void login(View view){
 
         JsonObjectRequest jsonObjectRequest = null;
+        JSONObject jsonObject = null;
         final EditText etNombre = (EditText)findViewById(R.id.etUser);
         final EditText etPass= (EditText)findViewById(R.id.etPassword);
 
         try {
-            JSONObject jsonObject = new JSONObject();
+            jsonObject = new JSONObject();
             jsonObject.put("nombre", etNombre.getText().toString());
             jsonObject.put("pass", etPass.getText().toString());
 
             jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                    Constantes.URL_LOGIN, jsonObject,
+                    Globales.URL_LOGIN, jsonObject,
                     new Response.Listener<JSONObject>() {
 
                         @Override
@@ -110,22 +113,28 @@ public class Login extends AppCompatActivity {
 
                                     //Empezamos a empacar los datos del intent MainActivity
                                     intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    intent.putExtra("latitudEmpresa", response.getDouble("latitudEmpresa"));
-                                    intent.putExtra("longitudEmpresa", response.getDouble("longitudEmpresa"));
+                                    intent.putExtra("latitudEmpresa", response.getDouble("latitud"));
+                                    intent.putExtra("longitudEmpresa", response.getDouble("longitud"));
 
-                                    Constantes.ID_EMPRESA = response.getInt("idEmpresa");
-                                    Constantes.MAX_DISTANCE = response.getDouble("distancia");
+                                    JSONArray jsonArray = response.getJSONArray("listAlquiler");
+                                    Gson gson = new Gson();
+                                    Alquiler[] arrAlquiler = gson.fromJson(jsonArray.toString(), Alquiler[].class);
+                                    ArrayList<Alquiler> listAlquiler = new ArrayList<>(Arrays.asList(arrAlquiler));
+                                    intent.putParcelableArrayListExtra("listAlquiler", listAlquiler);
+
+                                    Globales.ID_USUARIO = response.getInt("id_usuario");
+                                    Globales.ID_EMPRESA = response.getInt("id_empresa");
+                                    Globales.NOMBRE_EMPRESA = response.getString("nombre_empresa");
+                                    Globales.MAX_DISTANCE = response.getDouble("distancia");
+                                    Globales.USER = etNombre.getText().toString();
+                                    Globales.PASSWORD = etPass.getText().toString();
 
                                     //Impide que la activity se reinicie al cerrarla.
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                                     //====================================================================================//
 
-                                    //Guardamos las credenciales para hacerlas accesibles desde el resto de activities.
-                                    Constantes.USER = etNombre.getText().toString();
-                                    Constantes.PASSWORD = etPass.getText().toString();
-
-                                    JsonArrayRequest request = new JsonArrayRequest(Constantes.URL_LISTAHAMACAS, new Response.Listener<JSONArray>() {
+                                    JsonArrayRequest request = new JsonArrayRequest(Globales.URL_LISTAHAMACAS, new Response.Listener<JSONArray>() {
 
                                         @Override
                                         public void onResponse(JSONArray response) {
@@ -197,7 +206,7 @@ public class Login extends AppCompatActivity {
                         }
                     });
 
-            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(Constantes.TIMEOUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(Globales.TIMEOUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             progressDialog.setMessage("Comprobando credenciales...");
             progressDialog.setIndeterminate(true);

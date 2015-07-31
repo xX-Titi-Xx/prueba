@@ -26,7 +26,7 @@ import com.example.xtiti.hammock_rent.dialogs.ConfirmDialogNuevaFilaHamaca;
 import com.example.xtiti.hammock_rent.dialogs.MarkerDialog;
 import com.example.xtiti.hammock_rent.models.Alquiler;
 import com.example.xtiti.hammock_rent.models.Hamaca;
-import com.example.xtiti.hammock_rent.utils.Constantes;
+import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Hamaca hamacaArrastrada;
     private List<Hamaca> listHamaca;
     private List<Hamaca> listNuevaFilaHamaca;
+    private ArrayList<Alquiler> listAlquiler;
     private List<Polyline> listPolyline;
     private ArrayList<Marker> listMarker;
     private ArrayList<Marker> listMarkerNuevaFilaHamaca;
-    private ArrayList<Alquiler> listAlquiler;
     private LatLng lastMarkerPosition;
     private VolleyUtil volleyUtil;
     private RequestQueue requestQueue;
@@ -88,10 +88,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int contHamacasPendientes;
     private int contHamacasOcupadas;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         inicializaObjetos();
@@ -127,12 +127,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void inicializaMap(){
+
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_frag);
         mapFragment.getMapAsync(this);
-
     }
 
     private void inicializaNavigationDrawer() {
+
         ListView listNavigationDrawer = (ListView)findViewById(R.id.navigation_drawer);
         ArrayAdapter<CharSequence> adapterListNavigationDrawer = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.list_navigation_drawer));
 
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.makeText(getApplicationContext(), "Opción 2", Toast.LENGTH_SHORT).show();
                 } else if (position == 2) {
                     Toast.makeText(getApplicationContext(), "Imprimiendo ticket...", Toast.LENGTH_SHORT).show();
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Constantes.URL_HORA, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Globales.URL_HORA, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         coordenadasMap = new LatLng(latitudEmpresa, longitudEmpresa);
 
         listHamaca = getIntent().getExtras().getParcelableArrayList("listHamaca");
+        listAlquiler = getIntent().getExtras().getParcelableArrayList("listAlquiler");
         listPolyline = new ArrayList<Polyline>();
 
         tvContHamacasLibres = (TextView)findViewById(R.id.cont_hamacas_disponibles);
@@ -297,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         CircleOptions options = new CircleOptions();
 
         options.center(coordenadasMap);
-        options.radius(Constantes.MAX_DISTANCE);
+        options.radius(Globales.MAX_DISTANCE);
 
         //Ancho del borde del círculo
         options.strokeWidth(1);
@@ -310,11 +312,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         CameraPosition.Builder cameraPositionBuilder = new CameraPosition.Builder();
         cameraPositionBuilder.target(coordenadasMap);
-        cameraPositionBuilder.tilt(Constantes.ANGULO_CAMARA);
-        cameraPositionBuilder.zoom(Constantes.NORMAL_ZOOM);
+        cameraPositionBuilder.tilt(Globales.ANGULO_CAMARA);
+        cameraPositionBuilder.zoom(Globales.NORMAL_ZOOM);
         CameraPosition cameraPosition = cameraPositionBuilder.build();
 
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); //newLatLngZoom(coordenadasMap, Constantes.NORMAL_ZOOM));
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); //newLatLngZoom(coordenadasMap, Globales.NORMAL_ZOOM));
         googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.addCircle(options);
@@ -323,10 +325,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
 
-                if (cameraPosition.zoom < Constantes.MIN_ZOOM) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Constantes.MIN_ZOOM));
+                if (cameraPosition.zoom < Globales.MIN_ZOOM) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadasMap, Globales.MIN_ZOOM));
                 }
-                else if(SphericalUtil.computeDistanceBetween(coordenadasMap, cameraPosition.target) > Constantes.MAX_DISTANCE){
+                else if(SphericalUtil.computeDistanceBetween(coordenadasMap, cameraPosition.target) > Globales.MAX_DISTANCE){
                     googleMap.animateCamera(CameraUpdateFactory.newLatLng(coordenadasMap));
                 }
             }
@@ -336,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(com.google.android.gms.maps.model.Marker marker) {
 
-                if(!marcandoFila) {
+                if (!marcandoFila) {
                     MarkerDialog markerDialog = new MarkerDialog();
                     markerDialog.setMarker(marker);
                     markerDialog.setOpcionesDialog(getResources().getStringArray(R.array.marker_options));
@@ -374,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 clickLocation.setLatitude(marker.getPosition().latitude);
                 clickLocation.setLongitude(marker.getPosition().longitude);
 
-                if (centerLocation.distanceTo(clickLocation) <= Constantes.MAX_DISTANCE) {
+                if (centerLocation.distanceTo(clickLocation) <= Globales.MAX_DISTANCE) {
                     hamacaArrastrada = listHamaca.get(posHamacaCogida);
                     hamacaArrastrada.setLatitud(marker.getPosition().latitude);
                     hamacaArrastrada.setLongitud(marker.getPosition().longitude);
@@ -387,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         jsonObject = new JSONObject(hamacaArrastradaString);
 
                         //Preparamos la petición de actualización de datos de la hamaca.
-                        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Constantes.URL_SAVEHAMACA, jsonObject, new Response.Listener<JSONObject>() {
+                        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Globales.URL_SAVEHAMACA, jsonObject, new Response.Listener<JSONObject>() {
 
                             @Override
                             public void onResponse(JSONObject response) {
@@ -438,15 +440,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(marcandoFila){
-                    if(puntoInicioFila == null){
+                if (marcandoFila) {
+                    if (puntoInicioFila == null) {
                         puntoInicioFila = new Location("InicioFila");
                         puntoInicioFila.setLatitude(latLng.latitude);
                         puntoInicioFila.setLongitude(latLng.longitude);
 
                         Toast.makeText(getApplicationContext(), "Pulse el punto final de la fila.", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
+                    } else {
                         puntoFinFila = new Location("FinFila");
                         puntoFinFila.setLatitude(latLng.latitude);
                         puntoFinFila.setLongitude(latLng.longitude);
@@ -464,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                if(!marcandoFila) {
+                if (!marcandoFila) {
                     Location centerLocation = new Location("Centro");
                     centerLocation.setLatitude(coordenadasMap.latitude);
                     centerLocation.setLongitude(coordenadasMap.longitude);
@@ -473,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     clickLocation.setLatitude(latLng.latitude);
                     clickLocation.setLongitude(latLng.longitude);
 
-                    if (centerLocation.distanceTo(clickLocation) <= Constantes.MAX_DISTANCE) {
+                    if (centerLocation.distanceTo(clickLocation) <= Globales.MAX_DISTANCE) {
                         MarkerDialog markerDialog = new MarkerDialog();
                         markerDialog.setOpcionesDialog(getResources().getStringArray(R.array.marker_add));
                         markerDialog.setCoordenadasMarker(latLng);
@@ -515,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         polylineOptions.add(inicioFila);
         polylineOptions.add(finFila);
         polylineOptions.color(getResources().getColor(R.color.fila));
-        polylineOptions.width(Constantes.ANCHO_FILA);
+        polylineOptions.width(Globales.ANCHO_FILA);
 
         listPolyline.add(googleMap.addPolyline(polylineOptions));
 
@@ -529,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             hamacaNueva = new Hamaca();
             hamacaNueva.setId(-1);
-            hamacaNueva.setId_empresa(Constantes.ID_EMPRESA);
+            hamacaNueva.setId_empresa(Globales.ID_EMPRESA);
             hamacaNueva.setEstado("LIBRE");
             hamacaNueva.setLatitud(puntoIntermedio.latitude);
             hamacaNueva.setLongitud(puntoIntermedio.longitude);
@@ -583,4 +584,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public List<Hamaca> getListNuevaFilaHamaca() {
         return listNuevaFilaHamaca;
     }
+
 }

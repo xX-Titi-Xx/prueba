@@ -17,7 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
 import com.example.xtiti.hammock_rent.activities.MainActivity;
 import com.example.xtiti.hammock_rent.models.Hamaca;
-import com.example.xtiti.hammock_rent.utils.Constantes;
+import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
@@ -72,7 +72,7 @@ public class ConfirmDialogBorradoHamaca extends DialogFragment {
                 try {
                     jsonObject = new JSONObject(hamacaBorrarString);
 
-                    jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Constantes.URL_BAJAHAMACA, jsonObject, new Response.Listener<JSONObject>() {
+                    jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Globales.URL_BAJAHAMACA, jsonObject, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
 
