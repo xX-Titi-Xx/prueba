@@ -30,7 +30,6 @@ public class Globales {
     public static final String HOST = "http://hammockrent.ddns.net:" + PORT;
     public static final String URL_SAVEHAMACA = HOST + "/Hammock_Rent/rest/savehamaca";
     public static final String URL_BAJAHAMACA = HOST + "/Hammock_Rent/rest/bajahamaca";
-    public static final String URL_LISTAHAMACAS = HOST + "/Hammock_Rent/rest/listahamacas";
     public static final String URL_LOGIN = HOST + "/Hammock_Rent/rest/login";
     public static final String URL_HORA = HOST + "/Hammock_Rent/rest/horaserver";
     public static final String URL_ALQUILER_HAMAMCA = HOST + "/Hammock_Rent/rest/alquilerhamaca";

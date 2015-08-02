@@ -15,7 +15,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
 import com.example.xtiti.hammock_rent.models.Alquiler;
@@ -23,8 +22,6 @@ import com.example.xtiti.hammock_rent.models.Hamaca;
 import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,6 +118,10 @@ public class Login extends AppCompatActivity {
                                     Alquiler[] arrAlquiler = gson.fromJson(jsonArray.toString(), Alquiler[].class);
                                     ArrayList<Alquiler> listAlquiler = new ArrayList<>(Arrays.asList(arrAlquiler));
                                     intent.putParcelableArrayListExtra("listAlquiler", listAlquiler);
+                                    jsonArray = response.getJSONArray("listHamaca");
+                                    Hamaca[] arrHamaca = gson.fromJson(jsonArray.toString(), Hamaca[].class);
+                                    listHamaca = new ArrayList<Hamaca>(Arrays.asList(arrHamaca));
+                                    intent.putParcelableArrayListExtra("listHamaca", listHamaca);
 
                                     Globales.ID_USUARIO = response.getInt("id_usuario");
                                     Globales.ID_EMPRESA = response.getInt("id_empresa");
@@ -132,61 +133,7 @@ public class Login extends AppCompatActivity {
                                     //Impide que la activity se reinicie al cerrarla.
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                                    //====================================================================================//
-
-                                    JsonArrayRequest request = new JsonArrayRequest(Globales.URL_LISTAHAMACAS, new Response.Listener<JSONArray>() {
-
-                                        @Override
-                                        public void onResponse(JSONArray response) {
-
-                                            Gson gson = new Gson();
-                                            JSONObject jsonObject = null;
-                                            JsonParser jsonParser = null;
-                                            JsonElement jsonElement = null;
-                                            Hamaca hamaca = null;
-                                            listHamaca = new ArrayList<Hamaca>();
-
-                                            for (int cont = 0; cont < response.length(); cont++) {
-
-                                                try {
-                                                    jsonObject = response.getJSONObject(cont);
-                                                    jsonParser = new JsonParser();
-                                                    jsonElement = jsonParser.parse(jsonObject.toString());
-
-                                                    hamaca = gson.fromJson(jsonElement, Hamaca.class);
-                                                    listHamaca.add(hamaca);
-
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-
-                                            intent.putParcelableArrayListExtra("listHamaca", listHamaca);
-                                            //Quitamos el dialogo.
-                                            progressDialog.dismiss();
-
-                                            startActivity(intent);
-
-                                        }
-                                    }, new Response.ErrorListener() {
-
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            Toast.makeText(getApplicationContext(), "No se ha podido realizar la operación.", Toast.LENGTH_SHORT);
-                                            //Quitamos el dialogo.
-                                            progressDialog.dismiss();
-                                        }
-                                    });
-
-                                    //Configuramos el diálogo de proceso
-                                    progressDialog.setIndeterminate(true);
-                                    progressDialog.setMessage("Recuperando hamacas...");
-
-                                    //Mostramos el diálogo de proceso de recuperación de hamacas
-                                    progressDialog.show();
-
-                                    //Lanzamos la petición de la lista de hamacas.
-                                    requestQueue.add(request);
+                                    startActivity(intent);
                                 }
                                 else{
                                     etPass.setText("");

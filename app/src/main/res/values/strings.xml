@@ -36,7 +36,7 @@
 
     <string-array name="list_navigation_drawer">
         <item>Leer código</item>
-        <item>Opción 2</item>
+        <item>Historial Alquileres</item>
         <item>Imprimir Ticket</item>
         <item>Cerrar sesión</item>
     </string-array>

@@ -141,13 +141,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         listNavigationDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 if (position == 0) {
-                    Toast.makeText(getApplicationContext(), "Opción 1", Toast.LENGTH_SHORT).show();
+
                     IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
                     integrator.setPrompt("Enfoque el código QR...");
                     integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
 
                     integrator.initiateScan();
+
                 } else if (position == 1) {
                     Toast.makeText(getApplicationContext(), "Opción 2", Toast.LENGTH_SHORT).show();
                 } else if (position == 2) {
