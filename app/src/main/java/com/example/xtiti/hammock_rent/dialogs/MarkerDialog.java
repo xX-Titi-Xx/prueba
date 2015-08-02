@@ -32,13 +32,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -172,8 +178,18 @@ public class MarkerDialog extends DialogFragment {
                             public void onResponse(JSONObject response) {
                                 BitmapDescriptor customMarker = BitmapDescriptorFactory.fromResource(R.drawable.ic_action_beach_umbrella_and_hammock_24);
                                 JsonParser jsonParser = new JsonParser();
-                                Gson gson2 = new Gson();
                                 JsonElement jsonElement = jsonParser.parse(response.toString());
+
+                                GsonBuilder builder = new GsonBuilder();
+
+                                // Register an adapter to manage the date types as long values
+                                builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                                    public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                                        return new Date(json.getAsJsonPrimitive().getAsLong());
+                                    }
+                                });
+
+                                Gson gson2 = builder.create();
 
                                 listAlquiler.add(gson2.fromJson(jsonElement, Alquiler.class));
 
@@ -224,8 +240,6 @@ public class MarkerDialog extends DialogFragment {
         if(!hamacaNueva.getEstado().equalsIgnoreCase("PENDIENTE")) {
             estadoAnteriorHamaca = hamacaNueva.getEstado();
             hamacaNueva.setEstado("PENDIENTE");
-
-            //CAMBIAR
 
             Gson gson = new Gson();
             String hamacaJsonString = gson.toJson(hamacaNueva);

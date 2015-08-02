@@ -16,7 +16,7 @@ public class Alquiler implements Parcelable{
     private int id_usuario;
     private int id_empresa;
     private int id_hamaca;
-    private Date hora_comienzo;
+    private Date hora_inicio;
     private Date hora_fin;
 
     public Alquiler(){}
@@ -33,11 +33,11 @@ public class Alquiler implements Parcelable{
 
         try {
 
-            hora_comienzo = sdf.parse(in.readString());
+            hora_inicio = sdf.parse(in.readString());
 
         } catch (ParseException e) {
 
-            hora_comienzo = null;
+            hora_inicio = null;
 
         }
 
@@ -69,12 +69,12 @@ public class Alquiler implements Parcelable{
         this.id_usuario = id_usuario;
     }
 
-    public Date getHora_comienzo() {
-        return hora_comienzo;
+    public Date getHora_inicio() {
+        return hora_inicio;
     }
 
-    public void setHora_comienzo(Date hora_comienzo) {
-        this.hora_comienzo = hora_comienzo;
+    public void setHora_inicio(Date hora_inicio) {
+        this.hora_inicio = hora_inicio;
     }
 
     public Date getHora_fin() {
@@ -117,8 +117,8 @@ public class Alquiler implements Parcelable{
         dest.writeInt(id_hamaca);
         dest.writeInt(id_usuario);
 
-        if(hora_comienzo != null){
-            dest.writeString(sdf.format(hora_comienzo));
+        if(hora_inicio != null){
+            dest.writeString(sdf.format(hora_inicio));
         }
         else{
             dest.writeString("");

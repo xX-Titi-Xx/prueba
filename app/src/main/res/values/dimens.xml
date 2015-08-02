@@ -4,6 +4,7 @@
     <dimen name="activity_vertical_margin">10dp</dimen>
     <dimen name="title_marker_dialog_padding">16dp</dimen>
     <dimen name="title_fontsize_marker_dialog">18dp</dimen>
+    <dimen name="fixed_fontsize_alquiler">16dp</dimen>
     <dimen name="cont_hamacas_paddingRight">20dp</dimen>
     <dimen name="title_fontsize_confirm_dialog">16dp</dimen>
     <dimen name="et_login_width">150dp</dimen>

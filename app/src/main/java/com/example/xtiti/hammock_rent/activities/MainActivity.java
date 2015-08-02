@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.xtiti.hammock_rent.R;
 import com.example.xtiti.hammock_rent.dialogs.ConfirmDialogNuevaFilaHamaca;
+import com.example.xtiti.hammock_rent.dialogs.HistorialAlquileresDialog;
 import com.example.xtiti.hammock_rent.dialogs.MarkerDialog;
 import com.example.xtiti.hammock_rent.models.Alquiler;
 import com.example.xtiti.hammock_rent.models.Hamaca;
@@ -151,8 +152,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     integrator.initiateScan();
 
                 } else if (position == 1) {
-                    Toast.makeText(getApplicationContext(), "Opción 2", Toast.LENGTH_SHORT).show();
+
+                    HistorialAlquileresDialog historialAlquileresDialog = new HistorialAlquileresDialog();
+                    historialAlquileresDialog.show(getFragmentManager(), "tagHistorialAlquileresDialog");
+
                 } else if (position == 2) {
+
                     Toast.makeText(getApplicationContext(), "Imprimiendo ticket...", Toast.LENGTH_SHORT).show();
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Globales.URL_HORA, new Response.Listener<JSONObject>() {
                         @Override

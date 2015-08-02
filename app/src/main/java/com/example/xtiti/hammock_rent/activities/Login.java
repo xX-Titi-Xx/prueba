@@ -22,13 +22,20 @@ import com.example.xtiti.hammock_rent.models.Hamaca;
 import com.example.xtiti.hammock_rent.utils.Globales;
 import com.example.xtiti.hammock_rent.utils.VolleyUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by xtiti on 9/07/15.
@@ -102,9 +109,6 @@ public class Login extends AppCompatActivity {
 
                             try {
                                 if(response.getBoolean("comprobacion")){
-                                    etPass.setText("");
-                                    etNombre.setText("");
-                                    etNombre.requestFocus();
 
                                     Toast.makeText(getApplicationContext(), "Acceso concedido.", Toast.LENGTH_SHORT).show();
 
@@ -114,11 +118,24 @@ public class Login extends AppCompatActivity {
                                     intent.putExtra("longitudEmpresa", response.getDouble("longitud"));
 
                                     JSONArray jsonArray = response.getJSONArray("listAlquiler");
-                                    Gson gson = new Gson();
+                                    // Creates the json object which will manage the information received
+                                    GsonBuilder builder = new GsonBuilder();
+
+                                    // Register an adapter to manage the date types as long values
+                                    builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                                        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                                            return new Date(json.getAsJsonPrimitive().getAsLong());
+                                        }
+                                    });
+
+                                    Gson gson = builder.create();
+
                                     Alquiler[] arrAlquiler = gson.fromJson(jsonArray.toString(), Alquiler[].class);
                                     ArrayList<Alquiler> listAlquiler = new ArrayList<>(Arrays.asList(arrAlquiler));
                                     intent.putParcelableArrayListExtra("listAlquiler", listAlquiler);
                                     jsonArray = response.getJSONArray("listHamaca");
+
+                                    gson = new Gson();
                                     Hamaca[] arrHamaca = gson.fromJson(jsonArray.toString(), Hamaca[].class);
                                     listHamaca = new ArrayList<Hamaca>(Arrays.asList(arrHamaca));
                                     intent.putParcelableArrayListExtra("listHamaca", listHamaca);
@@ -129,6 +146,10 @@ public class Login extends AppCompatActivity {
                                     Globales.MAX_DISTANCE = response.getDouble("distancia");
                                     Globales.USER = etNombre.getText().toString();
                                     Globales.PASSWORD = etPass.getText().toString();
+
+                                    etPass.setText("");
+                                    etNombre.setText("");
+                                    etNombre.requestFocus();
 
                                     //Impide que la activity se reinicie al cerrarla.
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -20,6 +20,10 @@
     <string name="desea_imprimir_ticket">¿Desea imprimir el ticket de la operación?</string>
     <string name="si">Sí</string>
     <string name="no">No</string>
+    <string name="historial_de_alquileres">Historial de Alquileres</string>
+    <string name="hamaca">Hamaca:</string>
+    <string name="inicio">Inicio:</string>
+    <string name="fin">Fin:</string>
 
     <string-array name="marker_options">
         <item>Mover hamaca</item>
