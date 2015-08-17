@@ -3,7 +3,6 @@ package com.example.xtiti.hammock_rent.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,7 +43,9 @@ public class PrintDialog extends DialogFragment{
             }
         });
 
+        AlertDialog dialogo = builder.create();
+        dialogo.setCanceledOnTouchOutside(false);
 
-        return builder.create();
+        return dialogo;
     }
 }

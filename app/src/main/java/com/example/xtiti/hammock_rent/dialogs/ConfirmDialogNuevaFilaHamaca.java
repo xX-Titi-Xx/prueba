@@ -56,14 +56,16 @@ public class ConfirmDialogNuevaFilaHamaca extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                Gson gson = new Gson();
+                JSONObject jsonObject = null;
+                JsonObjectRequest jsonObjectRequest = null;
+
                 for (Hamaca hamaca : listNuevaFilaHamaca) {
 
-                    Gson gson = new Gson();
                     String hamacaJsonString = gson.toJson(hamaca);
-                    JsonObjectRequest jsonObjectRequest = null;
 
                     try {
-                        JSONObject jsonObject = new JSONObject(hamacaJsonString);
+                        jsonObject = new JSONObject(hamacaJsonString);
                         jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
                                 Globales.URL_SAVEHAMACA, jsonObject,
                                 new Response.Listener<JSONObject>() {
@@ -104,14 +106,17 @@ public class ConfirmDialogNuevaFilaHamaca extends DialogFragment {
         builder.setNegativeButton("Eliminar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 for (Marker marker : listMarkerNuevaFilaHamaca) {
                     marker.remove();
                 }
+
                 dismiss();
             }
         });
 
         AlertDialog dialogo = builder.create();
+        dialogo.setCanceledOnTouchOutside(false);
         dialogo.getWindow().setGravity(Gravity.TOP);
 
         dialogo.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;

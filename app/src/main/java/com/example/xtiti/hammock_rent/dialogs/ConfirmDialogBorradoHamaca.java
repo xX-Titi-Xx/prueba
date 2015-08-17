@@ -77,7 +77,7 @@ public class ConfirmDialogBorradoHamaca extends DialogFragment {
                         public void onResponse(JSONObject response) {
 
                             try {
-                                if(response.getBoolean("borrado")){
+                                if (response.getBoolean("borrado")) {
                                     listHamaca.remove(hamacaBorrar);
                                     marker.remove();
                                     mainActivity.estableceContadoresHamacas();
@@ -112,7 +112,10 @@ public class ConfirmDialogBorradoHamaca extends DialogFragment {
             }
         });
 
-        return builder.create();
+        AlertDialog dialogo = builder.create();
+        dialogo.setCanceledOnTouchOutside(false);
+
+        return dialogo;
     }
 
     public void setMarker(Marker marker) {

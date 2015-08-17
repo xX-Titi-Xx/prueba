@@ -38,6 +38,9 @@ public class HistorialAlquileresDialog extends DialogFragment {
             }
         });
 
-        return builder.create();
+        AlertDialog dialogo = builder.create();
+        dialogo.setCanceledOnTouchOutside(false);
+
+        return dialogo;
     }
 }
